@@ -6,21 +6,27 @@
 ## 说明 ：与java进行加密通信，后端使用的是AES的PKCS5Padding填充方式;但是前端在使用时需要使用PKCS7Padding，这两个是等价的
 ## 步骤 ：
 发送服务端的数据
+
 1.	由于Java就是按照128bit给的，但是由于是一个字符串，需要先在前端将其转为128bit(CryptoJS.enc.Utf8.parse);
+
 2.	进行数据偏移 plaintText为第一步执行结果，key为密钥字符串CryptoJS.enc.Latin1.parse()生成
-		CryptoJS.AES.encrypt(plaintText, key, { 
-	     	mode: CryptoJS.mode.ECB,
-	     	padding: CryptoJS.pad.Pkcs7
-		 })
+CryptoJS.AES.encrypt(plaintText, key, { 
+   	mode: CryptoJS.mode.ECB,
+   	padding: CryptoJS.pad.Pkcs7
+ })
+
 3.	将上面的对象encryptedData.toString()为字符串
 
 接收服务端的数据
+
 1.	拿到字符串类型的密文需要先将其用Hex方法parse一下CryptoJS.enc.Hex.parse();
+
 2.	使用CryptoJS.AES.decrypt方法解密
 		CryptoJS.AES.decrypt(encryptedBase64Str, key, { 
 			mode: CryptoJS.mode.ECB,
 			padding: CryptoJS.pad.Pkcs7
 		});
+
 3.	经过CryptoJS解密后，依然是一个对象，将其变成明文就需要按照Utf8格式转为字符串
 	decryptedData.toString(CryptoJS.enc.Utf8); 
 
@@ -66,13 +72,16 @@
 })(CryptoJS)
 ```
 
+#使用方法：
+1.在页面引入 aesCrypto.js
 
+2. 使用CryptoJS.aeson()和CryptoJS.aesoff()
 
 
 
 
 ## 前端开发环境与生产环境
-一、生产环境
+一、开发环境
 请求函数，默认使用jquery的1.6以上版本
 ```
 function GetUserInfo(data,add) {
@@ -100,7 +109,7 @@ GetUserInfo("参数字符串","地址")
 ```
 
 
-二、开发环境
+二、生产环境
 请求函数，默认使用jquery的1.6以上版本
 ```
 function GetUserInfo(data,add) {
@@ -110,10 +119,10 @@ function GetUserInfo(data,add) {
 	        url: url+add,
 	        dataType: "text",
 	        contentType: "application/json;utf-8",
-	        data: AES.send(data),
+	        data: CryptoJS.aeson(data),
 	        timeout: 6000,
 	        dataFilter:function(res,type){
-	          return JSON.parse(AES.get(res));
+	          return JSON.parse(CryptoJS.aesoff(res));
 	        }
 	    });
 };
